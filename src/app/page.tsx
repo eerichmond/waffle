@@ -20,8 +20,9 @@ export default function Home() {
         </div>
       </div>
 
-      <div>
+      <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
+
           <textarea className="text-black bg-white" placeholder="Enter your thesis here"></textarea>
           <textarea
             className="min-h-screen w-full text-black bg-white"
