@@ -14,10 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as chatgpt from "../chatgpt.js";
 import type * as embeddings from "../embeddings.js";
-import type * as sentence_similarity from "../sentence_similarity.js";
-import type * as waffles from "../waffles.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,10 +25,7 @@ import type * as waffles from "../waffles.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  chatgpt: typeof chatgpt;
   embeddings: typeof embeddings;
-  sentence_similarity: typeof sentence_similarity;
-  waffles: typeof waffles;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

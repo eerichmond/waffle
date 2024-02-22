@@ -1,12 +1,8 @@
 "use client"
 
-import Image from "next/image";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "convex/react";
-import sanitizeHtml from "sanitize-html"
 import ContentEditable from 'react-contenteditable';
-import { api } from "../convex/_generated/api";
 import { colorBySimilarity, getSimilarity } from "./utils";
 
 export default function Home() {
