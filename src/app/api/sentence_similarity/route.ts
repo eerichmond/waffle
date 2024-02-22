@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 
-
-function cosineSimilarity(embedding1, embedding2) {
+function cosineSimilarity(embedding1: number[], embedding2: number[]) {
     let dotProduct = 0;
     let magnitude1 = 0;
     let magnitude2 = 0;
@@ -17,7 +16,7 @@ function cosineSimilarity(embedding1, embedding2) {
 }
 
 export async function POST(req, res) {
-    const {sentence1, sentence2} = await req.json();
+    const { sentence1, sentence2 } = await req.json();
     const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
     })

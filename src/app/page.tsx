@@ -1,11 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "convex/react";
 import sanitizeHtml from "sanitize-html";
-// import ContentEditable from "react-contenteditable";
+
 import { api } from "../convex/_generated/api";
 import { colorBySimilarity, getSimilarity } from "./utils";
 import ContentEditable from "./ContentEditableComponent";
@@ -70,22 +69,8 @@ export default function Home() {
             onChange={event => setThesis(event.target.value)}
             value={thesis}
           ></textarea>
-          <ContentEditable
-            thesis={thesis}
-            thoughts={thoughts}
-            setThoughts={setThoughts}
-            // styledThoughts={styledThoughts}
-            // setStyledThoughts={setStyledThoughts}
-          />
-          {/* <ContentEditable
-            html={maybeColoredThoughts}
-            className="text-black bg-white w-full h-40"
-            onChange={event => {
-              setThoughts(event.currentTarget.textContent || "");
-            }}
-          /> */}
+          <ContentEditable thesis={thesis} thoughts={thoughts} setThoughts={setThoughts} />
         </div>
-        {/* <div className="w-1/4 h-full" dangerouslySetInnerHTML={{ __html: styledThoughts }}></div> */}
       </div>
     </main>
   );
