@@ -1,51 +1,48 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { useState, useEffect, useRef, useMemo } from "react";
 
 import { useQuery } from "convex/react";
-import sanitizeHtml from "sanitize-html"
-import ContentEditable from 'react-contenteditable';
+import sanitizeHtml from "sanitize-html";
+// import ContentEditable from "react-contenteditable";
 import { api } from "../convex/_generated/api";
 import { colorBySimilarity, getSimilarity } from "./utils";
-
+import ContentEditable from "./ContentEditableComponent";
 export default function Home() {
-  const [thesis, setThesis] = useState('');
-  const [thoughts, setThoughts] = useState('');
-  const [styledThoughts, setStyledThoughts] = useState('<div></div>');
+  const [thesis, setThesis] = useState("");
+  const [thoughts, setThoughts] = useState("");
+  // const [styledThoughts, setStyledThoughts] = useState("<div></div>");
   const sentenceSimilarityCache = useRef<Record<string, number>>({});
 
-  useEffect(() => {
-    const colorAll = async (str: string) => {
-      const split = str.split('.');
-      const styled = [];
-      for (let i = 0; i < split.length; i++) {
-        let similarity = 0;
-        if (sentenceSimilarityCache.current[split[i]]) {
-          similarity = sentenceSimilarityCache.current[split[i]];
-        } else {
-          similarity = await getSimilarity(thesis, split[i]);
-          sentenceSimilarityCache.current[split[i]] = similarity;
-          console.log('cache', sentenceSimilarityCache.current);
-        }
-        console.log(split[i], similarity);
-        styled.push(colorBySimilarity(split[i], similarity));
-      }
-      setStyledThoughts(styled.join('. '));
-    }
+  // useEffect(() => {
+  //   const colorAll = async (str: string) => {
+  //     const split = str.split(".");
+  //     const styled = [];
+  //     for (let i = 0; i < split.length; i++) {
+  //       let similarity = 0;
+  //       if (sentenceSimilarityCache.current[split[i]]) {
+  //         similarity = sentenceSimilarityCache.current[split[i]];
+  //       } else {
+  //         similarity = await getSimilarity(thesis, split[i]);
+  //         sentenceSimilarityCache.current[split[i]] = similarity;
+  //         console.log("cache", sentenceSimilarityCache.current);
+  //       }
+  //       console.log(split[i], similarity);
+  //       styled.push(colorBySimilarity(split[i], similarity));
+  //     }
+  //     setStyledThoughts(styled.join(". "));
+  //   };
 
-    const endings = ['.', ' ', '\n', ';'];
-    if (
-      endings.includes(thoughts[thoughts.length - 1]) ||
-      thoughts[thoughts.length - 1]?.trim() == ''
-    ) {
-      console.log('coloring');
-      colorAll(thoughts);
-    }
-  }, [thoughts, thesis]);
+  //   const endings = [".", " ", "\n", ";"];
+  //   if (endings.includes(thoughts[thoughts.length - 1]) || thoughts[thoughts.length - 1]?.trim() == "") {
+  //     console.log("coloring");
+  //     colorAll(thoughts);
+  //   }
+  // }, [thoughts, thesis]);
 
   const maybeColoredThoughts = useMemo(() => {
-    const split = thoughts.split('.');
+    const split = thoughts.split(".");
 
     const sentences = [];
     for (let i = 0; i < split.length; i++) {
@@ -57,9 +54,9 @@ export default function Home() {
       }
     }
 
-    return sentences.join('.');
+    return sentences.join(".");
   }, [thoughts, thesis, sentenceSimilarityCache.current]);
-  
+
   useEffect(() => {
     sentenceSimilarityCache.current = {};
   }, [thesis]);
@@ -67,19 +64,28 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
-
-          <textarea className="text-black bg-white w-full h-40" placeholder="Enter your thesis here" onChange={(event) => setThesis(event.target.value)} value={thesis}></textarea>
+          <textarea
+            className="text-black bg-white w-full h-40"
+            placeholder="Enter your thesis here"
+            onChange={event => setThesis(event.target.value)}
+            value={thesis}
+          ></textarea>
           <ContentEditable
+            thesis={thesis}
+            thoughts={thoughts}
+            setThoughts={setThoughts}
+            // styledThoughts={styledThoughts}
+            // setStyledThoughts={setStyledThoughts}
+          />
+          {/* <ContentEditable
             html={maybeColoredThoughts}
             className="text-black bg-white w-full h-40"
-            onChange={(event) => {setThoughts(event.currentTarget.textContent || '')}}
-          />
+            onChange={event => {
+              setThoughts(event.currentTarget.textContent || "");
+            }}
+          /> */}
         </div>
-        <div
-          className="w-1/4 h-full"
-          dangerouslySetInnerHTML={{ __html: styledThoughts }}
-        >
-        </div>
+        {/* <div className="w-1/4 h-full" dangerouslySetInnerHTML={{ __html: styledThoughts }}></div> */}
       </div>
     </main>
   );
