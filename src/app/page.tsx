@@ -29,7 +29,7 @@ export default function Home() {
       </div>
 
       <div className="w-full">
-        <textarea className="min-h-screen w-full" placeholder="Enter your thoughts here">
+        <textarea className="min-h-screen w-full text-black bg-white" placeholder="Enter your thoughts here">
 
         </textarea>
       </div>
