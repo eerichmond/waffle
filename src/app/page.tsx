@@ -15,28 +15,21 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
+            By <Image src="/vercel.svg" alt="Vercel Logo" className="dark:invert" width={100} height={24} priority />
           </a>
         </div>
       </div>
 
       <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
-          <textarea className="min-h-screen w-full text-black bg-white" placeholder="Enter your thoughts here">
 
-          </textarea>
+          <textarea className="text-black bg-white" placeholder="Enter your thesis here"></textarea>
+          <textarea
+            className="min-h-screen w-full text-black bg-white"
+            placeholder="Enter your thoughts here"
+          ></textarea>
         </div>
-        <div className="h-full w-1/4 border">
-          Result here
-        </div>
+        <div className="w-1/4">Result here</div>
       </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
@@ -86,9 +79,7 @@ export default function Home() {
               -&gt;
             </span>
           </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
+          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>Explore starter templates for Next.js.</p>
         </a>
 
         <a
