@@ -28,10 +28,15 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="w-full">
-        <textarea className="min-h-screen w-full text-black bg-white" placeholder="Enter your thoughts here">
+      <div>
+        <div className="w-3/4">
+          <textarea className="min-h-screen w-full text-black bg-white" placeholder="Enter your thoughts here">
 
-        </textarea>
+          </textarea>
+        </div>
+        <div className="w-1/4">
+          Result here
+        </div>
       </div>
 
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
