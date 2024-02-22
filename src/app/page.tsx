@@ -59,7 +59,7 @@ export default function Home() {
 
     return sentences.join('.');
   }, [thoughts, thesis, sentenceSimilarityCache.current]);
-  
+
   useEffect(() => {
     sentenceSimilarityCache.current = {};
   }, [thesis]);
@@ -72,7 +72,7 @@ export default function Home() {
           <ContentEditable
             html={maybeColoredThoughts}
             className="text-black bg-white w-full h-40"
-            onChange={(event) => {setThoughts(event.currentTarget.textContent || '')}}
+            onChange={(event) => { setThoughts(event.currentTarget.textContent || '') }}
           />
         </div>
         <div
@@ -81,6 +81,6 @@ export default function Home() {
         >
         </div>
       </div>
-    </main>
+    </main >
   );
 }

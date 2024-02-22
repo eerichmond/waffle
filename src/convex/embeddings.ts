@@ -10,7 +10,7 @@ export const get = query({
         })
 
         const embeddingsResponse = await openai.embeddings.create({
-            input: ["test sentence"],
+            input: [args.sentence],
             model: 'text-embedding-ada-002',
         });
 
