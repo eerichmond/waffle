@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 
 import { useQuery } from "convex/react";
 import sanitizeHtml from "sanitize-html"
@@ -36,23 +36,21 @@ export default function Home() {
   const [styledThoughts, setStyledThoughts] = useState('<div></div>');
   const sentenceSimilarityCache = useRef<Record<string, number>>({});
 
-  const chatgpt = useQuery(api.chatgpt.get, { sentence: "testing sentence" });
+  const colorBySimilarity = (str: string, similarity: number) => {
+    if (similarity < 0.2) {
+      return '<span style="color:red">' + str + '</span>';
+    } else if (similarity < 0.4) {
+      return '<span style="color:orange">' + str + '</span>';
+    } else if (similarity < 0.6) {
+      return '<span style="color:yellow">' + str + '</span>';
+    } else if (similarity < 0.8) {
+      return '<span style="color:green">' + str + '</span>';
+    } else {
+      return '<span style="color:blue">' + str + '</span>';
+    }
+  }
 
   useEffect(() => {
-    const colorBySimilarity = (str: string, similarity: number) => {
-      if (similarity < 0.2) {
-        return '<span style="color:red">' + str + '</span>';
-      } else if (similarity < 0.4) {
-        return '<span style="color:orange">' + str + '</span>';
-      } else if (similarity < 0.6) {
-        return '<span style="color:yellow">' + str + '</span>';
-      } else if (similarity < 0.8) {
-        return '<span style="color:green">' + str + '</span>';
-      } else {
-        return '<span style="color:blue">' + str + '</span>';
-      }
-    }
-
     const colorAll = async (str: string) => {
       const split = str.split('.');
       const styled = [];
@@ -72,26 +70,44 @@ export default function Home() {
     }
 
     const endings = ['.', ' ', '\n', ';'];
-    if (endings.includes(thoughts[thoughts.length - 1])) {
+    if (
+      endings.includes(thoughts[thoughts.length - 1]) ||
+      thoughts[thoughts.length - 1]?.trim() == ''
+    ) {
       console.log('coloring');
       colorAll(thoughts);
     }
   }, [thoughts, thesis]);
 
+  const maybeColoredThoughts = useMemo(() => {
+    const split = thoughts.split('.');
+
+    const sentences = [];
+    for (let i = 0; i < split.length; i++) {
+      if (sentenceSimilarityCache.current[split[i]]) {
+        const similarity = sentenceSimilarityCache.current[split[i]];
+        sentences.push(colorBySimilarity(split[i], similarity));
+      } else {
+        sentences.push(split[i]);
+      }
+    }
+
+    return sentences.join('.');
+  }, [thoughts, thesis, sentenceSimilarityCache.current]);
+  
   useEffect(() => {
     sentenceSimilarityCache.current = {};
   }, [thesis]);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div>SAMPLES: {chatgpt}</div>
       <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
 
           <textarea className="text-black bg-white w-full h-40" placeholder="Enter your thesis here" onChange={(event) => setThesis(event.target.value)} value={thesis}></textarea>
           <ContentEditable
-            html={thoughts}
+            html={maybeColoredThoughts}
             className="text-black bg-white w-full h-40"
-            onChange={(event) => setThoughts(event.target.value)}
+            onChange={(event) => {setThoughts(event.currentTarget.textContent || '')}}
           />
         </div>
         <div
