@@ -28,13 +28,13 @@ export default function Home() {
         </div>
       </div>
 
-      <div>
+      <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
           <textarea className="min-h-screen w-full text-black bg-white" placeholder="Enter your thoughts here">
 
           </textarea>
         </div>
-        <div className="w-1/4">
+        <div className="h-full w-1/4 border">
           Result here
         </div>
       </div>
