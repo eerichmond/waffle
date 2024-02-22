@@ -10,11 +10,11 @@ export default function Home() {
   const [thesis, setThesis] = useState('');
   const [thoughts, setThoughts] = useState('');
 
-  const samples = useQuery(api.waffles.get);
+  const chatgpt = useQuery(api.chatgpt.get, { sentence: "testing sentence" });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div>SAMPLES: {samples}</div>
+      <div>SAMPLES: {chatgpt}</div>
       <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
 
