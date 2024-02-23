@@ -11,13 +11,14 @@ interface ChatBoxProps {
     setUserInput: (input: string) => void;
     allowInput?: boolean;
     fontScaleFactor: number;
+    headerHeight: number;
 }
 
 const similarityToFontSize = (similarity: number, fontScaleFactor: number) => {
     return 20 - fontScaleFactor + (similarity + 0.5) * fontScaleFactor;
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUserInput, allowInput, fontScaleFactor }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUserInput, allowInput, fontScaleFactor, headerHeight}) => {
     const messages = useQuery(api.messages.getMessagesWithRelativeSimilarity, {
         userId: userId,
     });
@@ -37,7 +38,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUse
         <div className='w-full md:w-3/4 lg:w-2/3 flex flex-col'>
             <div className='flex flex-col flex-grow'
                 style={{
-                    maxHeight: 'calc(100vh - 22em)',
+                    maxHeight: `calc(100vh - ${headerHeight + 64 + 130}px)`, // `calc(100vh - 64px)`,
                     overflowY: 'scroll',
                 }}
             >

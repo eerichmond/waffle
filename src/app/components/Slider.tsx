@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import React, { useState } from 'react';
 
 interface SliderProps {
@@ -15,7 +16,9 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, setValue }) => {
     };
 
     return (
-        <div>
+        <Box
+            sx={{width: {xs: "90px", md: "150px"}}}
+        >
             <input
                 type="range"
                 min={min}
@@ -23,8 +26,9 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, setValue }) => {
                 value={value}
                 onChange={handleChange}
                 className="slider" // Assuming you have or will have some CSS for this
+                style={{width: "100%"}}
             />
-        </div>
+        </Box>
     );
 };
 
