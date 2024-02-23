@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { api } from "../convex/_generated/api";
 import { sizeBySimilarity } from "./utils";
 import ContentEditable from "./ContentEditableComponent";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
 export default function Home() {
   const [thesis, setThesis] = useState("");
   const [thoughts, setThoughts] = useState("");
