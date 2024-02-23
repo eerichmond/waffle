@@ -4,7 +4,7 @@ import OpenAI from "openai";
 import { query, action, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export const post = internalMutation({
     args: { message: v.string(), author: v.string(), embedding: v.array(v.number()) },
@@ -36,6 +36,10 @@ export const writeMessage = action({
 });
 
 function cosineSimilarity(embedding1: number[], embedding2: number[]) {
+    if (!embedding1.length) {
+        return 1;
+    }
+
     let dotProduct = 0;
     let magnitude1 = 0;
     let magnitude2 = 0;
@@ -53,27 +57,17 @@ function cosineSimilarity(embedding1: number[], embedding2: number[]) {
 export const getMessagesWithRelativeSimilarity = query({
     args: { username: v.string() },
     handler: async (ctx, args) => {
-
-        const messages = await ctx.db.query('messages').filter((q) => q.eq(q.field("author"), args.username)).order("desc").take(1);
-
-        const mostRecentMessage = messages[0];
-
-        const mostRecentEmbedding = mostRecentMessage?.embedding;
+        const [recentMessage] = await ctx.db.query('messages')
+            .filter((q) => q.eq(q.field("author"), args.username))
+            .order("desc")
+            .take(1);
 
         const allMessages = await ctx.db.query('messages').collect();
 
-        const messagesWithSimilarity = allMessages.map((message) => {
+        return allMessages.map(({ _id, author, embedding, message }) => {
+            const similarity = cosineSimilarity(recentMessage?.embedding ?? [], embedding);
 
-            const similarity = mostRecentEmbedding ?
-                cosineSimilarity(mostRecentEmbedding, message.embedding)
-                : 1;
-            return {
-                author: message.author as string,
-                message: message.message as string,
-                similarity
-            }
+            return { _id, author, message, similarity };
         });
-
-        return messagesWithSimilarity;
     },
 });

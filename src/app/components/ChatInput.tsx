@@ -1,27 +1,25 @@
-import React from 'react';
+import { Box, Button, TextareaAutosize } from '@mui/material';
+import React, { FC } from 'react';
 
-interface ChatInputProps {
+interface Props {
     userInput: string;
     setUserInput: (input: string) => void;
     send: () => void;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ userInput, setUserInput, send }) => {
+const ChatInput: FC<Props> = ({ userInput, setUserInput, send }) => {
     return (
-        <div>
-            <input
-                type="text"
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextareaAutosize
+                minRows={5}
+                style={{ padding: 10, width: "100%" }}
+                placeholder="Message ..."
+                onChange={(event) => setUserInput(event.target.value)}
                 value={userInput}
-                placeholder='Message...'
-                onChange={(e) => setUserInput(e.target.value)}
-                style={{
-                    backgroundColor: "white",
-                    color: "black",
-                    border: "1px solid black",
-                }}
-            />
-            <button onClick={() => send()}>Send</button>
-        </div>
+            ></TextareaAutosize>
+            <Button variant="contained" onClick={() => send()}
+                sx={{ display: 'flex', alignSelf: 'end' }}>Send</Button>
+        </Box>
     );
 };
 
