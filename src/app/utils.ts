@@ -5,7 +5,6 @@ export const sizeBySimilarity = (str: string, similarity: number) => {
 
 export const getSimilarity = async (sentence1: string, sentence2: string) => {
   if (sentence1 === '' || sentence2 === '') {
-    console.log('empty sentence');
     return 0;
   }
 
@@ -20,7 +19,5 @@ export const getSimilarity = async (sentence1: string, sentence2: string) => {
     })
   });
 
-  const data = await response.json();
-  console.log(data);
-  return data;
+  return response.json();
 }
