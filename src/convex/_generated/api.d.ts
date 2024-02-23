@@ -14,7 +14,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as embeddings from "../embeddings.js";
+import type * as messages from "../messages.js";
+import type * as users from "../users.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -25,7 +26,8 @@ import type * as embeddings from "../embeddings.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  embeddings: typeof embeddings;
+  messages: typeof messages;
+  users: typeof users;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
