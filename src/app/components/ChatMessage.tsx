@@ -2,14 +2,14 @@ import React from 'react';
 
 interface ChatMessageProps {
     fontSize: number;
-    username: string;
-    text: string;
+    author: string;
+    message: string;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ fontSize, username, text }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ fontSize, author, message }) => {
     return (
         <div style={{ fontSize }}>
-            <strong>{username}: </strong> {text}
+            <strong>{author}: </strong> {message}
         </div>
     );
 };

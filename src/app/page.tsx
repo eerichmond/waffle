@@ -3,32 +3,44 @@
 import { useEffect, useRef, useState } from "react";
 
 import { sizeBySimilarity } from "./utils";
-import ContentEditable from "./ContentEditableComponent";
+import ContentEditable from 'react-contenteditable';
 import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import ChatBox from "./components/ChatBox";
+import { UsernameInput } from "./components/UsernameInput";
 
 export default function Home() {
-  const [thesis, setThesis] = useState("");
-  const [thoughts, setThoughts] = useState("");
-  const sentenceSimilarityCache = useRef<Record<string, number>>({});
-
-  const users = useQuery(api.users.get);
+  const [username, setUsername] = useState("");
+  const [userInput, setUserInput] = useState("");
 
   const postMessage = useAction(api.messages.writeMessage);
   const messagesWithSimilarity = useQuery(api.messages.getMessagesWithRelativeSimilarity, {
-    username: "miles",
+    username: username,
   });
 
   console.log(messagesWithSimilarity);
 
-  useEffect(() => {
-    sentenceSimilarityCache.current = {};
-  }, [thesis]);
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <div className="w-full h-full flex gap-2 flex-col">
+        <div  
+          className="h-1/4 flex flex-row gap-2"
+        >
+          <UsernameInput username={username} setUsername={setUsername} />
+        </div>
+        <div
+          className="h-3/4"
+          >
+        <ChatBox
+          messages={messagesWithSimilarity || []}
+          addMessage={message => postMessage({ message, author: username })}
+          userInput={userInput}
+          setUserInput={setUserInput}
+        />
+        </div>
+      </div>
       {/* <div>{JSON.stringify(users)}</div> */}
-      <div>{JSON.stringify(messagesWithSimilarity)}</div>
+      {/* <div>{JSON.stringify(messagesWithSimilarity)}</div>
       <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
           <textarea
@@ -47,7 +59,7 @@ export default function Home() {
             Post
           </button>
         </div>
-      </div>
+      </div> */}
     </main>
   );
 }

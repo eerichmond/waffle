@@ -4,12 +4,17 @@ import ChatInput from './ChatInput';
 
 interface ChatBoxProps {
     messages: {
-        username: string;
-        text: string;
+        author: string;
+        message: string;
+        similarity: number;
     }[];
-    addMessage: (message: { username: string; text: string }) => void; 
+    addMessage: (message: string) => void;
     userInput: string;
     setUserInput: (input: string) => void;
+}
+
+const similarityToFontSize = (similarity: number) => {
+    return 4 + similarity * 24;
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({ messages, addMessage, userInput, setUserInput }) => {
@@ -17,10 +22,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, addMessage, userInput, setU
         <div>
             <div>
                 {messages.map((message, i) => (
-                    <ChatMessage key={i} fontSize={16} username={message.username} text={message.text} />
+                    <ChatMessage
+                        key={i}
+                        fontSize={similarityToFontSize(message.similarity)}
+                        author={message.author}
+                        message={message.message}
+                    />
                 ))}
             </div>
-            <ChatInput userInput={userInput} setUserInput={setUserInput} send={() => addMessage({ username: 'user', text: userInput })} />
+            <ChatInput userInput={userInput} setUserInput={setUserInput} send={() => {
+                setUserInput('')
+                addMessage(userInput)
+            }} />
         </div>
     );
 };

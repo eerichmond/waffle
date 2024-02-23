@@ -71,8 +71,8 @@ export const getMessagesWithRelativeSimilarity = query({
                 cosineSimilarity(mostRecentEmbedding, message.embedding)
                 : 1;
             return { 
-                author: message.author,
-                message: message.message,
+                author: message.author as string,
+                message: message.message as string,
                 similarity
             }
         });
