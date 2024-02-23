@@ -1,14 +1,15 @@
-import React from "react";
+import React, { FC } from "react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 
 interface ChatBoxProps {
   messages: {
-    username: string;
-    text: string;
-    newMessage: boolean;
+    _id: string;
+    author: string;
+    message: string;
+    similarity: number;
   }[];
-  addMessage: (message: { username: string; text: string }) => void;
+  addMessage: (message: string) => void;
   userInput: string;
   setUserInput: (input: string) => void;
 }

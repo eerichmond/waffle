@@ -1,48 +1,28 @@
-{/* <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            setUsername(temporaryUsername);
-          }}
-        >
-          <input
-            type="text"   
-            value={temporaryUsername}
-            onChange={(event) => setTemporaryUsername(event.target.value)}         
-            placeholder="Enter your username"
-          />
-          <button type="submit">Submit</button>
-        </form> */}
-
-// a component to render this
+import { Input } from '@mui/material';
 import React, { useState } from 'react';
 
-interface UsernameInputProps {
-    username: string;
-    setUsername: (username: string) => void;
+interface Props {
+  username: string;
+  setUsername: (username: string) => void;
 }
 
-export const UsernameInput: React.FC<UsernameInputProps> = ({ username, setUsername }) => {
-    const [temporaryUsername, setTemporaryUsername] = useState(username);
+export const UsernameInput: React.FC<Props> = ({ username, setUsername }) => {
+  const [temporaryUsername, setTemporaryUsername] = useState(username);
 
-    return (
-        <form
-            onSubmit={(event) => {
-                event.preventDefault();
-                setUsername(temporaryUsername);
-            }}
-        >
-            <input
-                type="text"
-                value={temporaryUsername}
-                onChange={(event) => setTemporaryUsername(event.target.value)}
-                placeholder="Enter your username"
-                style={{ 
-                    backgroundColor: "white",
-                    color: "black",
-                    border: "1px solid black",
-                 }}
-            />
-            <button type="submit" onClick={() => setUsername(temporaryUsername)}>Submit</button>
-        </form>
-    );
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        setUsername(temporaryUsername);
+      }}
+    >
+      <Input
+        type="text"
+        onChange={(event) => setTemporaryUsername(event.target.value)}
+        placeholder="Username"
+        value={temporaryUsername}
+        sx={{ width: 300 }}
+      />
+    </form>
+  );
 }
