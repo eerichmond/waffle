@@ -7,18 +7,19 @@ import { internal } from "./_generated/api";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export const post = internalMutation({
-    args: { message: v.string(), author: v.string(), embedding: v.array(v.number()) },
+    args: { message: v.string(), author: v.string(), embedding: v.array(v.number()), name: v.string() },
     handler: async (ctx, args) => {
         await ctx.db.insert('messages', {
             message: args.message,
             author: args.author,
+            name: args.name,
             embedding: args.embedding,
         });
     },
 });
 
 export const writeMessage = action({
-    args: { message: v.string(), author: v.string() },
+    args: { message: v.string(), author: v.string(), name: v.string() },
     handler: async (ctx, args) => {
         const embeddingsResponse = await openai.embeddings.create({
             input: [args.message],
@@ -30,6 +31,7 @@ export const writeMessage = action({
         await ctx.runMutation(internal.messages.post, {
             message: args.message,
             author: args.author,
+            name: args.name,
             embedding: embedding,
         })
     },
@@ -55,19 +57,27 @@ function cosineSimilarity(embedding1: number[], embedding2: number[]) {
 }
 
 export const getMessagesWithRelativeSimilarity = query({
-    args: { username: v.string() },
+    args: { userId: v.string() },
     handler: async (ctx, args) => {
         const [recentMessage] = await ctx.db.query('messages')
-            .filter((q) => q.eq(q.field("author"), args.username))
+            .filter((q) => q.eq(q.field("author"), args.userId))
             .order("desc")
             .take(1);
 
         const allMessages = await ctx.db.query('messages').collect();
 
-        return allMessages.map(({ _id, author, embedding, message }) => {
-            const similarity = cosineSimilarity(recentMessage?.embedding ?? [], embedding);
+        const messagesWithSimilarity = allMessages.map((message) => {
 
-            return { _id, author, message, similarity };
+            const similarity = recentMessage?.embedding ? 
+                cosineSimilarity(recentMessage.embedding, message.embedding)
+                : 1;
+            return { 
+                name: message.name as string,
+                message: message.message as string,
+                similarity
+            }
         });
+        
+        return messagesWithSimilarity;
     },
 });

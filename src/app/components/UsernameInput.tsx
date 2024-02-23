@@ -7,20 +7,18 @@ interface Props {
 }
 
 export const UsernameInput: React.FC<Props> = ({ username, setUsername }) => {
-  const [temporaryUsername, setTemporaryUsername] = useState(username);
-
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        setUsername(temporaryUsername);
+        setUsername(username);
       }}
     >
       <Input
         type="text"
-        onChange={(event) => setTemporaryUsername(event.target.value)}
+        onChange={(event) => setUsername(event.target.value)}
         placeholder="Username"
-        value={temporaryUsername}
+        value={username}
         sx={{ width: 300 }}
       />
     </form>
