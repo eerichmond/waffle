@@ -18,6 +18,11 @@ const similarityToFontSize = (similarity: number, fontScaleFactor: number) => {
     return 20 - fontScaleFactor + (similarity + 0.5) * fontScaleFactor;
 }
 
+const shouldHighlight = (similarity: number) => {
+    const threshold = 0.3;
+    return similarity > threshold;
+}
+
 const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUserInput, allowInput, fontScaleFactor, headerHeight}) => {
     const messages = useQuery(api.messages.getMessagesWithRelativeSimilarity, {
         userId: userId,
@@ -26,7 +31,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUse
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
     }, [messages, fontScaleFactor]); // Dependency array ensures this runs only when messages change
 
     if (!messages) {
@@ -48,6 +53,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUse
                         fontSize={similarityToFontSize(message.similarity, fontScaleFactor)}
                         name={message.name}
                         message={message.message}
+                        highlight={shouldHighlight(message.similarity)}
                     />
                 ))}
                 <div ref={messagesEndRef} />
