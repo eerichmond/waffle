@@ -2,7 +2,9 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import ContentEditable from "react-contenteditable";
 import { colorBySimilarity, getSimilarity } from "./utils";
 
-const ContentEditableComponent = ({ thesis, thoughts, setThoughts }) => {
+type Props = { thesis: string, thoughts: string, setThoughts: (v: string) => void }
+
+const ContentEditableComponent = ({ thesis, thoughts, setThoughts }: Props) => {
   const sentenceSimilarityCache = useRef<Record<string, number>>({});
   const [styledThoughts, setStyledThoughts] = useState("<div></div>");
 
