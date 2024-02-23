@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import ContentEditable from "react-contenteditable";
-import { colorBySimilarity, getSimilarity } from "./utils";
+import { sizeBySimilarity, getSimilarity } from "./utils";
 
-type Props = { thesis: string, thoughts: string, setThoughts: (v: string) => void }
+interface ContentEditableComponentProps {
+  thesis: string;
+  thoughts: string;
+  setThoughts: (thoughts: string) => void;
+}
 
-const ContentEditableComponent = ({ thesis, thoughts, setThoughts }: Props) => {
+const ContentEditableComponent: React.FC<ContentEditableComponentProps>= ({ thesis, thoughts, setThoughts }) => {
   const sentenceSimilarityCache = useRef<Record<string, number>>({});
   const [styledThoughts, setStyledThoughts] = useState("<div></div>");
 
@@ -22,9 +26,9 @@ const ContentEditableComponent = ({ thesis, thoughts, setThoughts }: Props) => {
           // console.log("cache", sentenceSimilarityCache.current);
         }
         // console.log(split[i], similarity);
-        styled.push(colorBySimilarity(split[i], similarity));
+        styled.push(sizeBySimilarity(split[i], similarity));
       }
-      setStyledThoughts(styled.join(". "));
+      // setStyledThoughts(styled.join(". "));
     };
 
     const endings = [".", " ", "\n", ";"];
@@ -41,7 +45,7 @@ const ContentEditableComponent = ({ thesis, thoughts, setThoughts }: Props) => {
     for (let i = 0; i < split.length; i++) {
       if (sentenceSimilarityCache.current[split[i]]) {
         const similarity = sentenceSimilarityCache.current[split[i]];
-        sentences.push(colorBySimilarity(split[i], similarity));
+        sentences.push(sizeBySimilarity(split[i], similarity));
       } else {
         sentences.push(split[i]);
       }
