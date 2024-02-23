@@ -26,6 +26,14 @@ function getOrCreateUniqueId() {
   }
 }
 
+function tryGetUsernameFromLocalStorage() {
+  try {
+    return localStorage.getItem('username') || '';
+  } catch (e) {
+    return '';
+  }
+}
+
 export default function Home() {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
@@ -35,9 +43,23 @@ export default function Home() {
   const postMessage = useAction(api.messages.writeMessage);
 
   useEffect(() => {
-    if (!userId)
+    if (!userId) {
       setUserId(getOrCreateUniqueId());
+      if (!username) {
+        setUsername(tryGetUsernameFromLocalStorage());
+      }
+    }
   }, [userId]);
+
+  useEffect(() => {
+    if (username) {
+      try {
+        localStorage.setItem('username', username);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+  }, [username]);
 
   return (
     <ThemeProvider theme={createTheme()}>
