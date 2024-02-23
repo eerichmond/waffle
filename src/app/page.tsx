@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { sizeBySimilarity } from "./utils";
 import ContentEditable from "./ContentEditableComponent";
-import { useQuery } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 export default function Home() {
@@ -13,17 +13,22 @@ export default function Home() {
   const sentenceSimilarityCache = useRef<Record<string, number>>({});
 
   const users = useQuery(api.users.get);
-  const messages = useQuery(api.messages.get);
+
+  const postMessage = useAction(api.messages.writeMessage);
+  const messagesWithSimilarity = useQuery(api.messages.getMessagesWithRelativeSimilarity, {
+    username: "miles",
+  });
+
+  console.log(messagesWithSimilarity);
 
   useEffect(() => {
     sentenceSimilarityCache.current = {};
   }, [thesis]);
+
   return (
-    <main className="flex min-h-screen flex-col justify-between p-24">
-      {messages?.map(({ _id, author, message, }) => {
-        return <div key={_id} style={{ border: "solid 1px lightgray", padding: "10px 0" }}>{message} <span style={{ fontSize: 'smaller' }}>{author}</span></div>
-      })}
-      <hr />
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      {/* <div>{JSON.stringify(users)}</div> */}
+      <div>{JSON.stringify(messagesWithSimilarity)}</div>
       <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
           <textarea
@@ -33,6 +38,14 @@ export default function Home() {
             value={thesis}
           ></textarea>
           <ContentEditable thesis={thesis} thoughts={thoughts} setThoughts={setThoughts} />
+          <button
+            onClick={() => {
+              postMessage({ message: thoughts, author: "miles" });
+              setThoughts("");
+            }}
+          >
+            Post
+          </button>
         </div>
       </div>
     </main>
