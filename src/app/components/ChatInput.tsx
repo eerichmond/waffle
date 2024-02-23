@@ -23,7 +23,7 @@ const ChatInput: FC<Props> = ({ userInput, setUserInput, send, allowInput }) => 
                     name="message"
                     type="text"
                     value={userInput}
-                    placeholder={allowInput ? "Enter your message" : "Submit a username to chat"}
+                    placeholder={allowInput ? "Enter your message" : "Enter your username above in order to chat"}
                     onChange={(e) => setUserInput(e.target.value)}
                     disabled={!allowInput}
                     sx={{ flexGrow: 1, width: "100%" }}
@@ -31,6 +31,7 @@ const ChatInput: FC<Props> = ({ userInput, setUserInput, send, allowInput }) => 
                 <Button variant="contained"
                     type="submit"
                     sx={{ display: 'flex', alignSelf: 'end', flexGrow: 0, marginTop: 1 }}
+                    disabled={!allowInput}
                 >
                     Send
                 </Button>
