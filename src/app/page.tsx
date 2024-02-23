@@ -1,23 +1,23 @@
 "use client";
 
-import Image from "next/image";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { useQuery } from "convex/react";
-
-import { api } from "../convex/_generated/api";
-import { colorBySimilarity } from "./utils";
 import ContentEditable from "./ContentEditableComponent";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 export default function Home() {
   const [thesis, setThesis] = useState("");
   const [thoughts, setThoughts] = useState("");
   const sentenceSimilarityCache = useRef<Record<string, number>>({});
+
+  const users = useQuery(api.users.get);
 
   useEffect(() => {
     sentenceSimilarityCache.current = {};
   }, [thesis]);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <div>{JSON.stringify(users)}</div>
       <div className="w-full h-full flex gap-2">
         <div className="w-3/4">
           <textarea
