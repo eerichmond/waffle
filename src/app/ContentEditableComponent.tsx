@@ -1,16 +1,15 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { FC, useEffect, useState, useRef, useMemo } from "react";
 import ContentEditable from "react-contenteditable";
 import { sizeBySimilarity, getSimilarity } from "./utils";
 
-interface ContentEditableComponentProps {
+interface Props {
   thesis: string;
   thoughts: string;
   setThoughts: (thoughts: string) => void;
 }
 
-const ContentEditableComponent: React.FC<ContentEditableComponentProps>= ({ thesis, thoughts, setThoughts }) => {
+const ContentEditableComponent: FC<Props> = ({ thesis, thoughts, setThoughts }) => {
   const sentenceSimilarityCache = useRef<Record<string, number>>({});
-  const [styledThoughts, setStyledThoughts] = useState("<div></div>");
 
   useEffect(() => {
     const colorAll = async (str: string) => {
@@ -23,12 +22,9 @@ const ContentEditableComponent: React.FC<ContentEditableComponentProps>= ({ thes
         } else {
           similarity = await getSimilarity(thesis, split[i]);
           sentenceSimilarityCache.current[split[i]] = similarity;
-          // console.log("cache", sentenceSimilarityCache.current);
         }
-        // console.log(split[i], similarity);
         styled.push(sizeBySimilarity(split[i], similarity));
       }
-      // setStyledThoughts(styled.join(". "));
     };
 
     const endings = [".", " ", "\n", ";"];
@@ -57,10 +53,8 @@ const ContentEditableComponent: React.FC<ContentEditableComponentProps>= ({ thes
   return (
     <ContentEditable
       html={maybeColoredThoughts}
-      className="text-black bg-white w-full h-40"
-      onChange={event => {
-        setThoughts(event.currentTarget.textContent || "");
-      }}
+      onChange={({ currentTarget }) => setThoughts(currentTarget.textContent ?? "")}
+      style={{ borderRadius: 2, borderColor: 'lightgray', borderWidth: 1, height: 100 }}
     />
   );
 };

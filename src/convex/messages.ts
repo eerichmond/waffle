@@ -1,13 +1,10 @@
 import { v } from "convex/values";
 import OpenAI from "openai";
 
-import { query, mutation, action, internalMutation } from "./_generated/server";
+import { query, action, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, });
 
 export const post = internalMutation({
     args: { message: v.string(), author: v.string(), embedding: v.array(v.number()) },
@@ -67,16 +64,16 @@ export const getMessagesWithRelativeSimilarity = query({
 
         const messagesWithSimilarity = allMessages.map((message) => {
 
-            const similarity = mostRecentEmbedding ? 
+            const similarity = mostRecentEmbedding ?
                 cosineSimilarity(mostRecentEmbedding, message.embedding)
                 : 1;
-            return { 
+            return {
                 author: message.author as string,
                 message: message.message as string,
                 similarity
             }
         });
-        
+
         return messagesWithSimilarity;
     },
 });
