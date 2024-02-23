@@ -8,6 +8,7 @@ import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { colorBySimilarity } from "./utils";
 import ContentEditable from "./ContentEditableComponent";
+import ChatComponent from "./components/ChatComponent";
 export default function Home() {
   const [thesis, setThesis] = useState("");
   const [thoughts, setThoughts] = useState("");
@@ -27,6 +28,7 @@ export default function Home() {
             value={thesis}
           ></textarea>
           <ContentEditable thesis={thesis} thoughts={thoughts} setThoughts={setThoughts} />
+          <ChatComponent />
         </div>
       </div>
     </main>
