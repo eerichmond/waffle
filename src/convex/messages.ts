@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import OpenAI from "openai";
 
-import { query, action, internalMutation } from "./_generated/server";
+import { query, action, internalMutation, internalQuery } from "./_generated/server";
 import { internal } from "./_generated/api";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -18,6 +18,30 @@ export const post = internalMutation({
     },
 });
 
+export const getMostRecent = internalQuery({
+    args: { userId: v.string() },
+    handler: async (ctx, args) => {
+        return await ctx.db.query('messages')
+            .filter((q) => q.eq(q.field("author"), args.userId))
+            .order("desc")
+            .take(1);
+    },
+});
+
+function addEmbeddings(
+    embeddingAndWeight1: [number[], number],
+    embeddingAndWeight2: [number[], number]
+): number[] {
+    const [embedding1, weight1] = embeddingAndWeight1;
+    const [embedding2, weight2] = embeddingAndWeight2;
+
+    return embedding1.map((value, index) => {
+        return value * weight1 + embedding2[index] * weight2;
+    });
+}
+
+const PREV_MESSAGE_WEIGHT = 0.5;
+
 export const writeMessage = action({
     args: { message: v.string(), author: v.string(), name: v.string() },
     handler: async (ctx, args) => {
@@ -26,7 +50,18 @@ export const writeMessage = action({
             model: 'text-embedding-3-small',
         });
 
-        const embedding = embeddingsResponse.data[0].embedding;
+        let embedding = embeddingsResponse.data[0].embedding;
+
+        const [recentMessage] = await ctx.runQuery(internal.messages.getMostRecent,
+            { userId: args.author })
+
+        if (recentMessage) {
+            const previousEmbedding = recentMessage.embedding;
+            embedding = addEmbeddings(
+                [previousEmbedding, PREV_MESSAGE_WEIGHT],
+                [embedding, 1 - PREV_MESSAGE_WEIGHT]
+            );
+        }
 
         await ctx.runMutation(internal.messages.post, {
             message: args.message,
@@ -68,16 +103,16 @@ export const getMessagesWithRelativeSimilarity = query({
 
         const messagesWithSimilarity = allMessages.map((message) => {
 
-            const similarity = recentMessage?.embedding ? 
+            const similarity = recentMessage?.embedding ?
                 cosineSimilarity(recentMessage.embedding, message.embedding)
                 : 1;
-            return { 
+            return {
                 name: message.name as string,
                 message: message.message as string,
                 similarity
             }
         });
-        
+
         return messagesWithSimilarity;
     },
 });
