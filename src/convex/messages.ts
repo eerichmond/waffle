@@ -1,12 +1,12 @@
 import { v } from "convex/values";
 import OpenAI from "openai";
 
-import { query, action, internalMutation, internalQuery } from "./_generated/server";
+import { query, action, internalMutation, internalQuery, internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export const post = internalMutation({
+export const insertMessage = internalMutation({
     args: { message: v.string(), author: v.string(), embedding: v.array(v.number()), name: v.string() },
     handler: async (ctx, args) => {
         await ctx.db.insert('messages', {
@@ -40,17 +40,26 @@ function addEmbeddings(
     });
 }
 
-const PREV_MESSAGE_WEIGHT = 0.5;
+async function embed(message: string, dims:number=128) {
+    const embeddingsResponse = await openai.embeddings.create({
+        input: [message],
+        model: 'text-embedding-3-large',
+        dimensions: dims
+    });
+
+    return embeddingsResponse.data[0].embedding;
+}
+
+const PREV_MESSAGE_WEIGHT = 0.2;
 
 export const writeMessage = action({
     args: { message: v.string(), author: v.string(), name: v.string() },
     handler: async (ctx, args) => {
-        const embeddingsResponse = await openai.embeddings.create({
-            input: [args.message],
-            model: 'text-embedding-3-small',
-        });
-
-        let embedding = embeddingsResponse.data[0].embedding;
+        await ctx.runAction(internal.messages.reCalculateAllMessageEmbeddings);
+        const time1 = Date.now();
+        let embedding = await embed(args.message);
+        const time2 = Date.now();
+        console.log(`Embedding took: ${time2 - time1}ms`);
 
         const [recentMessage] = await ctx.runQuery(internal.messages.getMostRecent,
             { userId: args.author })
@@ -63,7 +72,7 @@ export const writeMessage = action({
             );
         }
 
-        await ctx.runMutation(internal.messages.post, {
+        await ctx.runMutation(internal.messages.insertMessage, {
             message: args.message,
             author: args.author,
             name: args.name,
@@ -115,4 +124,35 @@ export const getMessagesWithRelativeSimilarity = query({
 
         return messagesWithSimilarity;
     },
+});
+
+
+export const getAllMessages = internalQuery({
+    handler: async (ctx) => {
+        return await ctx.db.query('messages').collect();
+    }
+});
+
+export const editMessageEmbedding = internalMutation({
+    args: { id: v.id("messages"), embedding: v.array(v.number()) },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.id, {
+            embedding: args.embedding
+        });
+    }
+});
+
+export const reCalculateAllMessageEmbeddings = internalAction({
+    args: {},
+    handler: async (ctx, args) => {
+        const allMessages = await ctx.runQuery(internal.messages.getAllMessages);
+        for (const message of allMessages) {
+            console.log(`Embedding: ${message.message}`);
+            const embedding = await embed(message.message);
+            await ctx.runMutation(internal.messages.editMessageEmbedding, {
+                id: message._id,
+                embedding
+            });
+        }
+    }
 });
