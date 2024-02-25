@@ -55,7 +55,7 @@ const PREV_MESSAGE_WEIGHT = 0.2;
 export const writeMessage = action({
     args: { message: v.string(), author: v.string(), name: v.string() },
     handler: async (ctx, args) => {
-        await ctx.runAction(internal.messages.reCalculateAllMessageEmbeddings);
+        // await ctx.runAction(internal.messages.reCalculateAllMessageEmbeddings);
         const time1 = Date.now();
         let embedding = await embed(args.message);
         const time2 = Date.now();
