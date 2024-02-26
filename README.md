@@ -1,7 +1,7 @@
 
 # Waffle
 
- Don't get off topic. Keep focus to deliver the right message.
+A chatroom where the other messages are re-sized relative to their similarity to what you are messaging about. Semantic similarity is computed via openai api embedding model.
 
 ## Demo
 
