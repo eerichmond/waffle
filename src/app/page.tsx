@@ -11,6 +11,7 @@ import ContentEditable from "./ContentEditableComponent";
 import { Box, Container, CssBaseline, Paper, TextareaAutosize, ThemeProvider, Typography, createTheme } from "@mui/material";
 import { v4 as uuidv4 } from 'uuid';
 import { get } from "https";
+import { generateRandomUsername } from "./utils";
 
 function getOrCreateUniqueId() {
   try {
@@ -55,7 +56,7 @@ export default function Home() {
     if (!userId) {
       setUserId(getOrCreateUniqueId());
       if (!username) {
-        setUsername(tryGetUsernameFromLocalStorage());
+        setUsername(tryGetUsernameFromLocalStorage() || generateRandomUsername());
       }
     }
   }, [userId]);
