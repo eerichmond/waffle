@@ -15,7 +15,10 @@ interface ChatBoxProps {
 }
 
 const similarityToFontSize = (similarity: number, fontScaleFactor: number) => {
-    return 20 - fontScaleFactor + (similarity + 0.5) * fontScaleFactor;
+    return Math.max(
+        20 - fontScaleFactor + (similarity + 0.5) * fontScaleFactor,
+        1
+    );
 }
 
 const shouldHighlight = (similarity: number) => {
@@ -23,7 +26,7 @@ const shouldHighlight = (similarity: number) => {
     return similarity > threshold;
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUserInput, allowInput, fontScaleFactor, headerHeight}) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUserInput, allowInput, fontScaleFactor, headerHeight }) => {
     const messages = useQuery(api.messages.getMessagesWithRelativeSimilarity, {
         userId: userId,
     });
@@ -35,7 +38,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUse
     }, [messages, fontScaleFactor]); // Dependency array ensures this runs only when messages change
 
     if (!messages) {
-        
+
         return <div>Loading...</div>;
     }
 
@@ -58,15 +61,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({ userId, addMessage, userInput, setUse
                 ))}
                 <div ref={messagesEndRef} />
             </div>
-                <ChatInput
-                    userInput={userInput}
-                    setUserInput={setUserInput}
-                    send={() => {
-                        setUserInput('')
-                        addMessage(userInput)
-                    }}
-                    allowInput={allowInput}
-                />
+            <ChatInput
+                userInput={userInput}
+                setUserInput={setUserInput}
+                send={() => {
+                    setUserInput('')
+                    addMessage(userInput)
+                }}
+                allowInput={allowInput}
+            />
         </div >
     );
 };

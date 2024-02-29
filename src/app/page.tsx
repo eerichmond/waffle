@@ -39,7 +39,7 @@ export default function Home() {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [userInput, setUserInput] = useState("");
-  const [fontScaleFactor, setFontScaleFactor] = useState(20);
+  const [fontScaleFactor, setFontScaleFactor] = useState(30);
   const header = useRef<HTMLDivElement>(null);
   const slider = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
