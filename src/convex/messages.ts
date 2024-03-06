@@ -43,7 +43,7 @@ function addEmbeddings(
 async function embed(message: string, dims:number=128) {
     const embeddingsResponse = await openai.embeddings.create({
         input: [message],
-        model: 'text-embedding-3-large',
+        model: 'text-embedding-3-small',
         dimensions: dims
     });
 
